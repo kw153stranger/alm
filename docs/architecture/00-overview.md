@@ -1,5 +1,23 @@
 # 00. 설계 개요 (Overview)
 
+## 0. 플랫폼 포지셔닝 — 방법론 실행 플랫폼(MEP)
+
+본 서비스는 문서 저장소가 아니라 **방법론 실행 플랫폼(Methodology Execution Platform)** 이다.
+방법론을 *제공*하는 데 그치지 않고, 개발 프로세스에 **강제 적용**하며 산출물 생성·검증을
+자동화한다.
+
+**오케스트레이션 우선(Orchestration-first)**: 모든 것을 자체 구현하지 않는다. 검증된 툴
+(Confluence·Backstage·Jira·GitLab/GitHub·Jenkins·Nextcloud)을 어댑터로 엮고, ALM Core 는
+그 위에서 아래 4가지만 소유(own)한다.
+
+1. **방법론 정의** — Methodology / Stage / ArtifactTemplate / Gate 정의(설정으로 관리)
+2. **프로젝트 자동생성 오케스트레이션** — Backstage/Cookiecutter 를 호출해 표준 구조·문서·Jira·Git·CI 생성 ([08](08-project-scaffolding.md))
+3. **추적성 척추(spine)** — WorkItem/TraceLink 로 요구사항↔설계↔개발↔테스트↔릴리즈 연결
+4. **Gate 상태·승인** — 상태전이 + 통과조건 판정 + 전자서명 ([03](03-gate-workflow.md), [09](09-gate-validation.md))
+
+무거운 실행(문서 편집·저장, 이슈 관리, CI 실행)은 위임하고, Core 는 "지휘자"로 얇게 유지한다.
+툴 매핑 상세는 [07-platform-reference-architecture](07-platform-reference-architecture.md).
+
 ## 1. 설계 목표
 
 본 서비스는 세 가지 사용자 요구를 만족한다.
@@ -16,9 +34,9 @@
    하나의 `WorkItem` 타입 계층으로 표현한다. 유형별로 필드는 다르지만, 링크·버전·상태·권한
    메커니즘은 공통이다. (IBM ELM / Codebeamer 패턴)
 
-2. **문서형 뷰 + 구조화 DB 이중화** — 실무자에게는 Word/Markdown 유사 문서로 보여주되,
-   내부는 문단/항목 단위로 구조화 저장한다. 문서는 구조화 데이터에 대한 *렌더링 뷰*이며
-   원천(source of truth)이 아니다. (Polarion LiveDocs 패턴)
+2. **문서는 위임, 메타·추적성은 소유** — 문서 본문의 저장·편집은 Confluence 또는 Git(Markdown)에
+   위임한다. Core 는 각 문서를 WorkItem 참조가 포함된 *구조화 메타*로 관리하고, 추적성·상태·버전
+   포인터만 소유한다. (자체 LiveDoc 렌더러는 필수가 아닌 *선택* 구현 — Polarion LiveDocs 는 참고 패턴)
 
 3. **이벤트 소싱 기반 자동생성** — 산출물은 "누가 작성"하는 것이 아니라 "개발 이벤트에서 도출"된다.
    외부 이벤트(웹훅)를 정규화하여 AutomationRule 로 산출물 필드에 반영한다.
@@ -55,47 +73,48 @@ Integration
 
 ## 4. 논리 아키텍처
 
+오케스트레이션 우선 관점을 반영한 배치. Core 는 얇은 지휘자이고, 실행은 외부 툴에 위임한다.
+
 ```mermaid
 flowchart LR
-  subgraph Dev["개발툴"]
-    Git[Git / GitHub·GitLab]
-    CI[CI/CD · Jenkins·Actions]
-    Issue[이슈트래커 · Jira]
+  subgraph Tools["위임 툴(베스트오브브리드)"]
+    Conf[Confluence\n방법론·가이드·문서]
+    Back[Backstage\n스캐폴딩·TechDocs]
+    Jira[Jira\n작업·요구사항]
+    Git[GitLab/GitHub\n소스·문서 VCS]
+    CI[Jenkins/Actions\nGate 실행·CI/CD]
+    NC[Nextcloud\n대용량 산출물]
   end
 
-  subgraph Ingest["연동 계층"]
-    WH[Webhook Receiver]
-    NORM[Event Normalizer]
+  subgraph Core["ALM Core (지휘자 · 얇게 유지)"]
+    MDL[Methodology\nStage/Template/Gate 정의]
+    SCAF[Scaffolder\n프로젝트 자동생성 오케스트레이션]
+    WI[(Work Item / Trace\n추적성 척추)]
+    AUTO[Automation Engine\n이벤트→산출물 갱신]
+    GATE[Gate Engine\n상태전이·통과판정·서명]
+    BASE[Baseline / Audit]
   end
 
-  subgraph Core["ALM Core"]
-    AUTO[Automation Engine\n산출물 자동생성]
-    WI[(Work Item Store)]
-    ART[(Artifact / LiveDoc Store)]
-    GATE[Gate Engine\n상태전이 + 서명]
-    TRACE[Traceability Graph]
-    BASE[Baseline / Snapshot]
+  subgraph Edge["연동 계층"]
+    WH[Webhook Receiver\n+ Normalizer]
+    ADP[툴 어댑터\nConfluence/Jira/CI API]
   end
 
   subgraph UX["사용자"]
-    UI[Web UI\n문서형 뷰 · Gate 콘솔]
+    UI[Web UI\nPortal · Gate 콘솔]
     API[REST / OSLC-lite API]
   end
 
-  Git --> WH
-  CI --> WH
-  Issue --> WH
-  WH --> NORM --> AUTO
+  Git & CI & Jira --> WH --> AUTO
+  MDL --> SCAF
+  SCAF -->|생성 요청| ADP --> Back & Jira & Git & CI
   AUTO --> WI
-  AUTO --> ART
-  WI <--> TRACE
-  ART --> GATE
+  WI --> GATE
+  GATE -->|검증 위임| CI
   GATE --> BASE
-  UI --> WI
-  UI --> ART
-  UI --> GATE
+  ADP -.문서.-> Conf & NC
+  UI --> MDL & WI & GATE
   API --> WI
-  API --> ART
 ```
 
 ## 5. 3사 패턴의 반영 위치
