@@ -57,6 +57,7 @@
 | **[08-project-scaffolding](docs/architecture/08-project-scaffolding.md)** | **프로젝트 자동생성·산출물 자동생성(SRS/SDS/RTM…)** |
 | **[09-gate-validation](docs/architecture/09-gate-validation.md)** | **단계별 CI 기반 Gate 자동검증·차단 규칙** |
 | **[10-tailoring](docs/architecture/10-tailoring.md)** | **방법론 등록·선택·테일러링(병합/생략)·단계별 진행** |
+| **[11-authoring](docs/architecture/11-authoring.md)** | **방법론 저작 — 3레벨 WBS 사용자 등록·편집·발행** |
 
 원 벤치마크 조사: [`docs/benchmark.md`](docs/benchmark.md)
 

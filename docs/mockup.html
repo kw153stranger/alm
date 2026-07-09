@@ -352,6 +352,56 @@
   .wbs-task__deliv { margin-left: auto; font-family: var(--font-mono); font-size: 10.5px; padding: 2px 8px; border-radius: 6px; background: var(--accent-soft); color: var(--accent-ink); }
   .wbs-task__deliv.gate { background: var(--approve-soft); color: var(--approve); }
 
+  /* ---- methodology builder ---- */
+  .builder-bar { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; padding: 12px 16px; border: 1px solid var(--border); border-radius: var(--radius); background: var(--surface); box-shadow: var(--shadow); margin-bottom: 16px; }
+  .builder-bar .b-name { font-weight: 650; font-size: 15px; }
+  .builder-bar .b-name input { font: inherit; font-weight: 650; border: 1px solid transparent; background: transparent; color: var(--ink); padding: 3px 6px; border-radius: 6px; width: 180px; }
+  .builder-bar .b-name input:hover, .builder-bar .b-name input:focus { border-color: var(--border-strong); background: var(--surface-2); outline: none; }
+  .builder-bar .spacer { flex: 1; }
+  .valid-chip { font-size: 11.5px; display: inline-flex; align-items: center; gap: 6px; padding: 5px 10px; border-radius: 999px; }
+  .valid-chip.warn { background: var(--approve-soft); color: var(--approve); }
+  .valid-chip.ok { background: var(--pass-soft); color: var(--pass); }
+
+  .builder-grid { display: grid; grid-template-columns: 1fr 320px; gap: 16px; align-items: start; }
+  @media (max-width: 880px){ .builder-grid { grid-template-columns: 1fr; } }
+
+  .tree-editor { border: 1px solid var(--border); border-radius: var(--radius); background: var(--surface); box-shadow: var(--shadow); padding: 12px; }
+  .te-node { border-radius: 8px; }
+  .te-row { display: flex; align-items: center; gap: 8px; padding: 7px 8px; border-radius: 7px; cursor: pointer; }
+  .te-row:hover { background: var(--surface-2); }
+  .te-row.sel { background: var(--accent-soft); outline: 1px solid color-mix(in srgb, var(--accent) 35%, transparent); }
+  .te-key { font-family: var(--font-mono); font-size: 10.5px; color: var(--ink-3); width: 40px; flex: none; }
+  .te-name { font-size: 13px; font-weight: 550; }
+  .te-row.lvl1 .te-name { font-weight: 650; }
+  .te-badge { font-family: var(--font-mono); font-size: 9.5px; padding: 1px 6px; border-radius: 5px; background: var(--surface-2); color: var(--ink-2); border: 1px solid var(--border); }
+  .te-badge.deliv { background: var(--accent-soft); color: var(--accent-ink); border-color: transparent; }
+  .te-badge.gate { background: var(--approve-soft); color: var(--approve); border-color: transparent; }
+  .te-badge.mand { background: var(--block-soft); color: var(--block); border-color: transparent; }
+  .te-actions { margin-left: auto; display: flex; gap: 3px; opacity: 0; }
+  .te-row:hover .te-actions { opacity: 1; }
+  .te-btn { border: 1px solid var(--border); background: var(--surface); color: var(--ink-2); width: 22px; height: 22px; border-radius: 6px; cursor: pointer; font-size: 12px; display: grid; place-items: center; padding: 0; }
+  .te-btn:hover { color: var(--ink); border-color: var(--border-strong); }
+  .te-children { margin-left: 18px; border-left: 1.5px solid var(--border); padding-left: 8px; }
+  .te-add { display: inline-flex; align-items: center; gap: 6px; margin: 4px 0 8px 8px; font-size: 12px; color: var(--accent); background: none; border: 1px dashed var(--border-strong); border-radius: 7px; padding: 5px 10px; cursor: pointer; font-family: var(--font-sans); }
+  .te-add:hover { border-color: var(--accent); background: var(--accent-soft); }
+
+  /* property panel */
+  .props { border: 1px solid var(--border); border-radius: var(--radius); background: var(--surface); box-shadow: var(--shadow); padding: 16px; position: sticky; top: 16px; }
+  .props h4 { margin: 0 0 2px; font-size: 14px; }
+  .props .ptype { font-size: 11px; font-family: var(--font-mono); color: var(--accent); text-transform: uppercase; letter-spacing: .05em; }
+  .pfield { display: flex; flex-direction: column; gap: 5px; margin-top: 14px; }
+  .pfield label { font-size: 11.5px; color: var(--ink-2); font-weight: 550; }
+  .pfield .inp { padding: 8px 10px; border: 1px solid var(--border-strong); border-radius: 8px; background: var(--surface-2); font-size: 13px; color: var(--ink); font-family: var(--font-sans); }
+  .pfield .inp.mono { font-family: var(--font-mono); font-size: 12px; }
+  .ptoggle { display: flex; align-items: center; justify-content: space-between; padding: 9px 11px; border: 1px solid var(--border); border-radius: 8px; margin-top: 10px; font-size: 12.5px; }
+  .switch { width: 34px; height: 20px; border-radius: 999px; background: var(--accent); position: relative; flex: none; }
+  .switch::after { content:""; position: absolute; top: 2px; right: 2px; width: 16px; height: 16px; border-radius: 50%; background: #fff; }
+  .switch.off { background: var(--border-strong); }
+  .switch.off::after { right: auto; left: 2px; }
+  .chk-items { display: flex; flex-direction: column; gap: 6px; margin-top: 8px; }
+  .chk-item { display: flex; align-items: center; gap: 8px; font-size: 12.5px; padding: 6px 9px; border: 1px solid var(--border); border-radius: 7px; }
+  .chk-item .x { margin-left: auto; color: var(--ink-3); cursor: pointer; }
+
   a { color: var(--accent); }
   :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 4px; }
 </style>
@@ -376,6 +426,7 @@
   <nav>
     <div class="nav-label">방법론</div>
     <button class="nav-item" data-screen="registry" type="button"><span class="ico">▣</span> 방법론 등록 <span class="badge">3</span></button>
+    <button class="nav-item" data-screen="builder" type="button"><span class="ico">✎</span> 방법론 편집기</button>
     <button class="nav-item" data-screen="tailoring" type="button"><span class="ico">⤨</span> 테일러링</button>
     <div class="nav-label">실행</div>
     <button class="nav-item active" data-screen="pipeline" type="button"><span class="ico">▤</span> 파이프라인</button>
@@ -469,6 +520,95 @@
         </div>
         <div class="hint">Gate 는 <b>단계(레벨1)</b>에, 산출물은 <b>태스크(레벨3)</b>에 붙습니다. 이 마스터를 프로젝트마다 <b>테일러링</b>(단계·액티비티·태스크 레벨 병합/생략)해 실제 파이프라인을 만듭니다.</div>
       </div>
+    </section>
+
+    <!-- ============ BUILDER ============ -->
+    <section class="screen" id="builder">
+      <div class="screen__head">
+        <div class="eyebrow">METHODOLOGY BUILDER</div>
+        <h1>방법론 편집기 — 3레벨 WBS를 직접 등록</h1>
+        <p>단계 → 액티비티 → 태스크를 트리로 추가·편집하고 산출물·Gate·역할을 붙입니다. 발행 시 버전이 확정됩니다.</p>
+      </div>
+
+      <div class="builder-bar">
+        <span class="ptype" style="color:var(--ink-3)">편집 중</span>
+        <span class="b-name"><input value="사내 애자일 (Agile-Lite)" aria-label="방법론 이름" /></span>
+        <span class="meth-tag mono">v0.9</span>
+        <span class="pill approve">DRAFT</span>
+        <div class="spacer"></div>
+        <span class="valid-chip warn">⚠ 검증 2건 — 4단계에 Gate 미연결</span>
+        <button class="btn" type="button">미리보기</button>
+        <button class="btn primary" type="button">발행 요청 ▸</button>
+      </div>
+
+      <div class="builder-grid">
+        <div class="tree-editor">
+          <div class="te-node">
+            <div class="te-row lvl1"><span class="te-key">1</span><span class="te-name">계획</span><span class="te-badge gate">G1</span>
+              <span class="te-actions"><button class="te-btn" title="이름변경" type="button">✎</button><button class="te-btn" title="삭제" type="button">🗑</button></span></div>
+          </div>
+          <div class="te-node">
+            <div class="te-row lvl1"><span class="te-key">2</span><span class="te-name">요구사항</span><span class="te-badge gate">G2</span>
+              <span class="te-actions"><button class="te-btn" title="이름변경" type="button">✎</button><button class="te-btn" title="삭제" type="button">🗑</button></span></div>
+            <div class="te-children">
+              <div class="te-row lvl2"><span class="te-key">2.1</span><span class="te-name">요구사항 수집</span><span class="te-badge">Analyst</span>
+                <span class="te-actions"><button class="te-btn" type="button">✎</button><button class="te-btn" type="button">🗑</button></span></div>
+              <div class="te-children">
+                <div class="te-row lvl3"><span class="te-key">2.1.1</span><span class="te-name">이해관계자 인터뷰</span>
+                  <span class="te-actions"><button class="te-btn" type="button">✎</button><button class="te-btn" type="button">🗑</button></span></div>
+                <div class="te-row lvl3"><span class="te-key">2.1.2</span><span class="te-name">현행 시스템 분석</span>
+                  <span class="te-actions"><button class="te-btn" type="button">✎</button><button class="te-btn" type="button">🗑</button></span></div>
+                <button class="te-add" type="button">＋ 태스크 추가</button>
+              </div>
+              <div class="te-row lvl2"><span class="te-key">2.3</span><span class="te-name">요구사항 명세</span><span class="te-badge">Analyst</span>
+                <span class="te-actions"><button class="te-btn" type="button">✎</button><button class="te-btn" type="button">🗑</button></span></div>
+              <div class="te-children">
+                <div class="te-row lvl3 sel"><span class="te-key">2.3.1</span><span class="te-name">SRS 작성</span><span class="te-badge deliv">▤ SRS</span><span class="te-badge gate">Gate</span><span class="te-badge mand">잠금</span>
+                  <span class="te-actions"><button class="te-btn" type="button">✎</button><button class="te-btn" type="button">🗑</button></span></div>
+                <div class="te-row lvl3"><span class="te-key">2.3.2</span><span class="te-name">요구사항 ID 부여</span>
+                  <span class="te-actions"><button class="te-btn" type="button">✎</button><button class="te-btn" type="button">🗑</button></span></div>
+                <button class="te-add" type="button">＋ 태스크 추가</button>
+              </div>
+              <button class="te-add" type="button">＋ 액티비티 추가</button>
+            </div>
+          </div>
+          <div class="te-node">
+            <div class="te-row lvl1"><span class="te-key">3</span><span class="te-name">구현 · 테스트</span><span class="te-badge gate">G3</span>
+              <span class="te-actions"><button class="te-btn" type="button">✎</button><button class="te-btn" type="button">🗑</button></span></div>
+          </div>
+          <div class="te-node">
+            <div class="te-row lvl1"><span class="te-key">4</span><span class="te-name">릴리즈</span><span class="te-badge mand" title="Gate 미연결">⚠ Gate 없음</span>
+              <span class="te-actions"><button class="te-btn" type="button">✎</button><button class="te-btn" type="button">🗑</button></span></div>
+          </div>
+          <button class="te-add" type="button">＋ 단계 추가</button>
+        </div>
+
+        <div class="props">
+          <div class="ptype">TASK · 레벨3</div>
+          <h4>SRS 작성</h4>
+          <div class="pfield"><label>WBS 코드 (자동)</label><div class="inp mono">2.3.1</div></div>
+          <div class="pfield"><label>태스크명</label><div class="inp">SRS 작성</div></div>
+          <div class="pfield"><label>수행 역할</label><div class="inp">Analyst ▾</div></div>
+
+          <div class="ptoggle"><span>산출물 생성</span><span class="switch"></span></div>
+          <div class="pfield"><label>산출물 템플릿</label><div class="inp mono">SRS ▾</div></div>
+          <div class="ptoggle"><span>Gate 필수 (gate_relevant)</span><span class="switch"></span></div>
+          <div class="ptoggle"><span>정책 잠금 (mandatory · 생략불가)</span><span class="switch"></span></div>
+
+          <div class="pfield"><label>가이드 링크</label><div class="inp mono">confluence/SRS-guide</div></div>
+
+          <div class="pfield"><label>체크리스트</label>
+            <div class="chk-items">
+              <div class="chk-item">범위 정의 <span class="x">✕</span></div>
+              <div class="chk-item">요구사항 ID 규칙 준수 <span class="x">✕</span></div>
+              <div class="chk-item">이해관계자 승인 <span class="x">✕</span></div>
+              <button class="te-add" type="button" style="margin:2px 0 0">＋ 항목 추가</button>
+            </div>
+          </div>
+          <div class="btn-row"><button class="btn primary sm" type="button">저장</button><button class="btn ghost sm" type="button">취소</button></div>
+        </div>
+      </div>
+      <div class="hint">WBS 코드는 순서·이동에 따라 자동 재부여됩니다. 발행 검증: 모든 단계에 Gate·승인정책 연결, 빈 단계 없음, 산출물 참조 유효 — 통과해야 발행됩니다. (UI ↔ 방법론 YAML 양방향 동기화)</div>
     </section>
 
     <!-- ============ TAILORING ============ -->
