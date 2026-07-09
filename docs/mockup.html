@@ -290,6 +290,41 @@
   .tool .dot-ok { width: 7px; height: 7px; border-radius: 50%; background: var(--pass); flex: none; }
 
   .hint { font-size: 12px; color: var(--ink-3); margin-top: 14px; padding-top: 12px; border-top: 1px dashed var(--border-strong); }
+
+  /* ---- methodology registry ---- */
+  .meth-row { display: grid; grid-template-columns: 1.4fr 60px 1fr 90px 84px; gap: 14px; align-items: center; padding: 13px 4px; border-bottom: 1px solid var(--border); }
+  .meth-row:last-child { border-bottom: none; }
+  .meth-row.head { font-size: 11px; text-transform: uppercase; letter-spacing: .05em; color: var(--ink-3); font-weight: 650; }
+  .meth-name { font-weight: 600; }
+  .meth-name small { display: block; color: var(--ink-3); font-size: 11.5px; font-weight: 500; }
+  .chips { display: flex; gap: 5px; flex-wrap: wrap; }
+  .chip-s { font-size: 10.5px; font-family: var(--font-mono); padding: 1px 7px; border-radius: 999px; background: var(--surface-2); color: var(--ink-2); border: 1px solid var(--border); }
+  .meth-selected { border: 1px solid color-mix(in srgb, var(--accent) 40%, transparent); background: var(--accent-soft); border-radius: 8px; padding-left: 10px; padding-right: 10px; }
+
+  .stagestrip { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; margin-top: 4px; }
+  .stagestrip .sblock { font-size: 12px; font-weight: 550; padding: 7px 12px; border: 1px solid var(--border-strong); border-radius: 8px; background: var(--surface); display: flex; flex-direction: column; gap: 2px; }
+  .stagestrip .sblock .g { font-family: var(--font-mono); font-size: 10px; color: var(--ink-3); }
+  .stagestrip .arrow { color: var(--ink-3); font-size: 13px; }
+  .stagestrip .sblock.omit { opacity: .5; text-decoration: line-through; border-style: dashed; background: var(--surface-2); }
+  .stagestrip .sblock.merged { border-color: var(--accent); background: var(--accent-soft); color: var(--accent-ink); }
+
+  /* ---- tailoring ---- */
+  .tl-compare { display: grid; gap: 16px; }
+  .tl-panel { border: 1px solid var(--border); border-radius: var(--radius); background: var(--surface); box-shadow: var(--shadow); padding: 16px 18px; }
+  .tl-panel h4 { margin: 0 0 4px; font-size: 13px; }
+  .tl-panel .sub { font-size: 11.5px; color: var(--ink-3); margin-bottom: 12px; }
+  .op-card { display: flex; gap: 12px; padding: 12px 4px; border-bottom: 1px solid var(--border); }
+  .op-card:last-child { border-bottom: none; }
+  .op-tag { flex: none; font-family: var(--font-mono); font-size: 10.5px; font-weight: 700; padding: 3px 9px; border-radius: 6px; height: fit-content; }
+  .op-tag.merge { background: var(--accent-soft); color: var(--accent-ink); }
+  .op-tag.omit { background: var(--block-soft); color: var(--block); }
+  .op-tag.mod { background: var(--approve-soft); color: var(--approve); }
+  .op-body { font-size: 13px; }
+  .op-body b { font-weight: 600; }
+  .op-body .rat { display: block; margin-top: 3px; font-size: 11.5px; color: var(--ink-2); font-style: italic; }
+  .locked-art { display: inline-flex; align-items: center; gap: 5px; font-size: 11.5px; color: var(--ink-2); font-family: var(--font-mono); padding: 3px 9px; border: 1px dashed var(--border-strong); border-radius: 6px; }
+  .tl-approval { display: flex; align-items: center; gap: 12px; margin-top: 6px; padding: 12px 14px; border-radius: 8px; background: var(--pass-soft); border: 1px solid color-mix(in srgb, var(--pass) 30%, transparent); font-size: 12.5px; color: var(--pass); }
+
   a { color: var(--accent); }
   :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 4px; }
 </style>
@@ -312,6 +347,9 @@
   </div>
 
   <nav>
+    <div class="nav-label">방법론</div>
+    <button class="nav-item" data-screen="registry" type="button"><span class="ico">▣</span> 방법론 등록 <span class="badge">3</span></button>
+    <button class="nav-item" data-screen="tailoring" type="button"><span class="ico">⤨</span> 테일러링</button>
     <div class="nav-label">실행</div>
     <button class="nav-item active" data-screen="pipeline" type="button"><span class="ico">▤</span> 파이프라인</button>
     <button class="nav-item" data-screen="scaffold" type="button"><span class="ico">✚</span> 프로젝트 생성</button>
@@ -324,12 +362,130 @@
   </nav>
 
   <main>
+    <!-- ============ REGISTRY ============ -->
+    <section class="screen" id="registry">
+      <div class="screen__head">
+        <div class="eyebrow">METHODOLOGY REGISTRY</div>
+        <h1>방법론 등록 — 조직 표준을 등록·버전관리</h1>
+        <p>등록된 방법론은 프로젝트가 버전 고정(pin)해 선택합니다. 마스터가 개정돼도 진행 중 프로젝트는 흔들리지 않습니다.</p>
+      </div>
+
+      <div class="card card-pad">
+        <div class="meth-row head">
+          <span>방법론</span><span>버전</span><span>컴플라이언스</span><span>단계</span><span>상태</span>
+        </div>
+        <div class="meth-row meth-selected">
+          <div class="meth-name">의료기기 SW <small>IEC 62304</small></div>
+          <span class="mono">v2.0</span>
+          <div class="chips"><span class="chip-s">IEC62304</span><span class="chip-s">21CFR11</span></div>
+          <span class="mono">5</span>
+          <span class="pill pass">PUBLISHED</span>
+        </div>
+        <div class="meth-row">
+          <div class="meth-name">차량 기능안전 <small>ISO 26262</small></div>
+          <span class="mono">v1.3</span>
+          <div class="chips"><span class="chip-s">ISO26262</span><span class="chip-s">ASPICE</span></div>
+          <span class="mono">6</span>
+          <span class="pill pass">PUBLISHED</span>
+        </div>
+        <div class="meth-row">
+          <div class="meth-name">사내 애자일 <small>Agile-Lite</small></div>
+          <span class="mono">v0.9</span>
+          <div class="chips"><span class="chip-s">internal</span></div>
+          <span class="mono">4</span>
+          <span class="pill approve">DRAFT</span>
+        </div>
+      </div>
+
+      <div class="card card-pad" style="margin-top:16px">
+        <h3 class="card-title">선택된 방법론 · 마스터 단계 — IEC 62304 v2.0</h3>
+        <div class="stagestrip">
+          <div class="sblock">요구사항<span class="g">G1</span></div><span class="arrow">→</span>
+          <div class="sblock">설계<span class="g">G2</span></div><span class="arrow">→</span>
+          <div class="sblock">구현<span class="g">G3</span></div><span class="arrow">→</span>
+          <div class="sblock">테스트<span class="g">G4</span></div><span class="arrow">→</span>
+          <div class="sblock">릴리즈<span class="g">G5</span></div>
+        </div>
+        <div class="hint">각 단계는 필수 산출물·Gate 통과조건을 정의합니다. 이 마스터를 프로젝트마다 <b>테일러링</b>해 실제 파이프라인을 만듭니다.</div>
+      </div>
+    </section>
+
+    <!-- ============ TAILORING ============ -->
+    <section class="screen" id="tailoring">
+      <div class="screen__head">
+        <div class="eyebrow">TAILORING</div>
+        <h1>테일러링 — 프로젝트에 맞게 단계 병합·생략</h1>
+        <p>방법론은 준수하되 프로젝트 특성(규모·안전등급)에 맞춰 조정합니다. 조정에는 <b>근거·승인</b>이 강제됩니다(감사 대응).</p>
+      </div>
+
+      <div class="card card-pad" style="margin-bottom:16px">
+        <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+          <span class="pill accent">예시 프로젝트 · 내부 정산 도구</span>
+          <span class="meth-tag">방법론 IEC 62304 v2.0</span>
+          <span class="meth-tag">안전등급 Class A (저위험)</span>
+        </div>
+      </div>
+
+      <div class="tl-compare">
+        <div class="tl-panel">
+          <h4>① 마스터 파이프라인 (테일러링 전)</h4>
+          <div class="sub">방법론 원본 · 5단계</div>
+          <div class="stagestrip">
+            <div class="sblock">요구사항<span class="g">G1</span></div><span class="arrow">→</span>
+            <div class="sblock">설계<span class="g">G2</span></div><span class="arrow">→</span>
+            <div class="sblock">구현<span class="g">G3</span></div><span class="arrow">→</span>
+            <div class="sblock">테스트<span class="g">G4</span></div><span class="arrow">→</span>
+            <div class="sblock">릴리즈<span class="g">G5</span></div>
+          </div>
+        </div>
+
+        <div class="tl-panel">
+          <h4>② 테일러링 연산</h4>
+          <div class="sub">각 연산은 근거(rationale) 필수 · 정책 잠금 산출물은 생략 불가</div>
+          <div class="op-card">
+            <span class="op-tag merge">MERGE</span>
+            <div class="op-body"><b>요구사항 + 설계 → 분석·설계</b> (Gate G1+G2 → <span class="mono">G12</span>)
+              <span class="rat">근거: 소규모·단일 담당으로 요구/설계 반복이 짧아 단일 게이트로 통합.</span></div>
+          </div>
+          <div class="op-card">
+            <span class="op-tag omit">OMIT</span>
+            <div class="op-body"><b>릴리즈 단계 생략</b> → 산출물은 테스트 단계로 이관(reassign)
+              <span class="rat">근거: 내부 배포만 수행, 별도 릴리즈 관문 불필요. ReleaseNote 는 테스트 단계에서 작성.</span></div>
+          </div>
+          <div class="op-card">
+            <span class="op-tag mod">MODIFY</span>
+            <div class="op-body"><b>SDS 를 optional 로</b> 조정
+              <span class="rat">근거: 설계 규모가 작아 별도 상세설계서 대신 코드 주석·ADR 로 대체.</span></div>
+          </div>
+          <div style="margin-top:12px"><span class="locked-art">🔒 ValidationReport — 정책 잠금(mandatory), 생략 불가</span></div>
+        </div>
+
+        <div class="tl-panel" style="border-color:var(--accent)">
+          <h4>③ Effective 파이프라인 (이 프로젝트가 실제로 밟는 단계)</h4>
+          <div class="sub">재계산본 · 3단계 · 진행관리는 이 기준으로 동작</div>
+          <div class="stagestrip">
+            <div class="sblock merged">분석·설계<span class="g">G12 · from 요구사항+설계</span></div><span class="arrow">→</span>
+            <div class="sblock">구현<span class="g">G3</span></div><span class="arrow">→</span>
+            <div class="sblock">테스트<span class="g">G4 (+릴리즈 산출물)</span></div>
+            <span class="arrow" style="opacity:.4">→</span>
+            <div class="sblock omit">릴리즈<span class="g">omitted</span></div>
+          </div>
+          <div class="tl-approval">✓ 테일러링 프로파일 승인됨 — QA_Manager, 2026-07-05 · 감사로그 기록</div>
+        </div>
+      </div>
+    </section>
+
     <!-- ============ PIPELINE ============ -->
     <section class="screen active" id="pipeline">
       <div class="screen__head">
         <div class="eyebrow">PROJECT PIPELINE</div>
         <h1>결제 게이트웨이 — 방법론 진행 현황</h1>
         <p>단계는 워크플로우 상태이고 단계 사이의 <b>G1–G5</b>가 Gate입니다. Gate 칩을 클릭하면 승인 콘솔로 이동합니다.</p>
+        <div style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap">
+          <span class="meth-tag">방법론 IEC 62304 v2.0</span>
+          <span class="meth-tag">안전등급 Class C</span>
+          <span class="meth-tag">테일러링 미적용 · 전체 5단계</span>
+        </div>
       </div>
 
       <div class="kpis">

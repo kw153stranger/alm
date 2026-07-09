@@ -175,6 +175,64 @@ defect      --impacts----> requirement | test_case
 ### BASELINE / BASELINE_ITEM
 [06-baseline-audit](06-baseline-audit.md) 참조. 특정 시점 전체 상태의 불변 동결.
 
+## 7. 테일러링 계층 (Tailoring)
+
+방법론 등록·선택·**테일러링(병합/생략)**·프로젝트별 진행을 지지하는 스키마.
+개념·연산·거버넌스는 [10-tailoring](10-tailoring.md) 참조.
+
+```mermaid
+erDiagram
+  METHODOLOGY ||--o{ STAGE : "master defines"
+  PROJECT }o--|| METHODOLOGY : "selects (pinned version)"
+  PROJECT ||--|| TAILORING_PROFILE : has
+  TAILORING_PROFILE ||--o{ TAILORING_OP : contains
+  PROJECT ||--o{ EFFECTIVE_STAGE : "runs (materialized)"
+  EFFECTIVE_STAGE }o--o{ STAGE : "derived_from"
+```
+
+### TAILORING_PROFILE
+프로젝트 1개에 대한 테일러링 묶음. 승인되어야 적용된다(거버넌스).
+
+| 필드 | 타입 | 설명 |
+|---|---|---|
+| id | uuid | |
+| project_id | fk | 1:1 |
+| methodology_id / methodology_version | fk / semver | 선택·고정된 방법론 |
+| status | enum | `draft` / `in_review` / `approved` / `active` |
+| approved_by, approved_at | | 테일러링 승인 기록(감사) |
+| rationale | text | 전체 테일러링 사유 |
+
+### TAILORING_OP
+개별 테일러링 연산. 근거(rationale) 필수.
+
+| 필드 | 타입 | 설명 |
+|---|---|---|
+| id | uuid | |
+| profile_id | fk | |
+| type | enum | `merge` / `omit` / `modify_artifact` / `add` |
+| source_stage_keys | text[] | 대상 마스터 단계들 |
+| result_stage_key / result_name | text | 병합·추가 결과 단계 |
+| artifact_changes | jsonb | `[{artifact, action: require\|optional\|waive, reassign_to}]` |
+| rationale | text | **필수** — 왜 병합/생략하는가 |
+
+> 정책 보호: 마스터 STAGE/ARTIFACT_TEMPLATE 의 `mandatory:true` 항목은 `omit`/`waive` 불가.
+
+### EFFECTIVE_STAGE
+테일러링 합성 결과 = **프로젝트가 실제로 밟는 단계**. 파이프라인·Gate·진행의 기준.
+
+| 필드 | 타입 | 설명 |
+|---|---|---|
+| id | uuid | |
+| project_id | fk | |
+| key / name | text | 예: `analysis_design` / `분석·설계` |
+| order | int | 재계산된 순서 |
+| derived_from | text[] | 유래한 마스터 단계 키(병합이면 다수) |
+| gate_key | text | 통합 Gate 키(예: `G12`) |
+| state | enum | `locked` / `active` / `in_gate_review` / `passed` ← **단계별 진행 관리** |
+
+> WorkItem/Artifact 는 `stage_id` 대신(또는 함께) `effective_stage_id` 로 바인딩되어,
+> 테일러링된 파이프라인 위에서 추적성·Gate 커버리지가 계산된다.
+
 ## 4. 상태값 요약
 
 | 대상 | 상태 |
@@ -182,6 +240,7 @@ defect      --impacts----> requirement | test_case
 | WorkItem | `draft → in_review → approved → implemented → verified → closed` |
 | Artifact | `auto_generated → edited → finalized(=doc_version 동결)` |
 | GateInstance | `open → in_approval → passed \| rejected` |
-| Stage | `locked → active → in_gate_review → passed` |
+| Stage / EffectiveStage | `locked → active → in_gate_review → passed` |
+| TailoringProfile | `draft → in_review → approved → active` |
 
 각 상태전이 규칙과 강제 조건은 다음 문서들에서 구체화한다.
