@@ -53,25 +53,64 @@ erDiagram
 | compliance_tags | text[] | `IEC62304`, `ISO26262`, `DO-178C`, `21CFR11` … |
 | status | enum | `draft` / `published` / `deprecated` |
 
-### STAGE
-방법론의 단계. 순서(order)로 파이프라인을 형성한다.
+### 정의 3레벨 — STAGE → ACTIVITY → TASK
 
+방법론은 **3레벨 WBS**로 정의된다 (RUP/EPF·공공 방법론 계보). 기준 예시 규모: **단계 6 · 액티비티 22 · 태스크 51**.
+
+```
+METHODOLOGY
+ └─ STAGE (6)          단계 — 게이트가 붙는 관문 단위
+     └─ ACTIVITY (22)  액티비티 — 단계 내 작업 묶음(담당 역할 단위)
+         └─ TASK (51)  태스크 — 실제 작업/체크리스트 항목, 산출물 생성 단위
+```
+
+Gate 는 **STAGE 레벨**에, 산출물(ArtifactTemplate)은 **TASK 레벨**에 붙는다.
+체크리스트(초기 요구 "단계별 작업 절차·체크리스트")는 곧 **TASK 목록**이다.
+
+#### STAGE (레벨 1)
 | 필드 | 타입 | 설명 |
 |---|---|---|
 | id | uuid | |
 | methodology_id | fk | |
-| key | text | `requirements` / `design` / `implementation` / `test` / `deployment` |
+| key | text | `planning`/`requirements`/`design`/`implementation`/`test`/`release` |
 | name | text | 표시명 |
 | order | int | 단계 순서 |
 | entry_criteria | jsonb | 진입 조건(선행 Gate 통과 등) |
+| gate_key | text | 이 단계를 닫는 Gate (`G1`..) |
 
-### ARTIFACT_TEMPLATE
-단계에서 산출되어야 할 문서의 틀. 필드 스키마 + 자동생성 매핑을 포함.
-
+#### ACTIVITY (레벨 2)
 | 필드 | 타입 | 설명 |
 |---|---|---|
 | id | uuid | |
 | stage_id | fk | |
+| key | text | WBS 코드 `2.1` |
+| name | text | 예: "요구사항 수집" |
+| order | int | |
+| role | text | 담당 역할(`Analyst`, `Architect`, `QA` …) |
+
+#### TASK (레벨 3)
+| 필드 | 타입 | 설명 |
+|---|---|---|
+| id | uuid | |
+| activity_id | fk | |
+| key | text | WBS 코드 `2.1.1` |
+| name | text | 예: "이해관계자 인터뷰" |
+| order | int | |
+| role | text | 수행 역할 |
+| deliverable_template_id | fk? | 산출물 생성 태스크면 ArtifactTemplate 참조(없으면 순수 작업) |
+| checklist | jsonb | 완료 판정 체크 항목 |
+| guidance_ref | url | 절차 가이드(Confluence/TechDocs) 링크 |
+| gate_relevant | bool | 이 태스크 산출물이 Gate 필수 조건인지 |
+| automation_hint | jsonb | 자동완료 트리거(예: 커밋/CI 이벤트로 태스크 done — [02](02-artifact-automation.md)) |
+
+### ARTIFACT_TEMPLATE
+**태스크가 산출하는** 문서의 틀. 필드 스키마 + 자동생성 매핑을 포함.
+
+| 필드 | 타입 | 설명 |
+|---|---|---|
+| id | uuid | |
+| task_id | fk | 이 산출물을 만드는 태스크(레벨 3) |
+| stage_id | fk | 소속 단계(비정규화 — Gate 판정 편의) |
 | key | text | `SRS`, `SDD`, `TestPlan`, `TraceMatrix`, `ReleaseNote` … |
 | schema | jsonb | 문단/항목 구조 정의 (LiveDoc 블록 스키마) |
 | autofill_source | jsonb | 자동 채움 소스(어떤 WorkItem 쿼리/이벤트로 채우는지) |
@@ -210,8 +249,9 @@ erDiagram
 | id | uuid | |
 | profile_id | fk | |
 | type | enum | `merge` / `omit` / `modify_artifact` / `add` |
-| source_stage_keys | text[] | 대상 마스터 단계들 |
-| result_stage_key / result_name | text | 병합·추가 결과 단계 |
+| target_level | enum | `stage` / `activity` / `task` — 어느 WBS 레벨에 적용하는지 |
+| source_keys | text[] | 대상 마스터 개체 키(레벨에 따라 단계/액티비티/태스크) |
+| result_key / result_name | text | 병합·추가 결과 개체 |
 | artifact_changes | jsonb | `[{artifact, action: require\|optional\|waive, reassign_to}]` |
 | rationale | text | **필수** — 왜 병합/생략하는가 |
 
@@ -232,6 +272,10 @@ erDiagram
 
 > WorkItem/Artifact 는 `stage_id` 대신(또는 함께) `effective_stage_id` 로 바인딩되어,
 > 테일러링된 파이프라인 위에서 추적성·Gate 커버리지가 계산된다.
+
+> **하위 레벨도 함께 materialize**: EffectiveStage 아래로 `EffectiveActivity` / `EffectiveTask`
+> (각 `derived_from` + `state`)가 생성되어, 프로젝트별 **태스크=체크리스트** 진행이 관리된다.
+> 태스크 완료율이 액티비티·단계 진행률로 롤업되고, `gate_relevant` 태스크는 Gate 조건에 반영된다.
 
 ## 4. 상태값 요약
 

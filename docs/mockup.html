@@ -292,7 +292,7 @@
   .hint { font-size: 12px; color: var(--ink-3); margin-top: 14px; padding-top: 12px; border-top: 1px dashed var(--border-strong); }
 
   /* ---- methodology registry ---- */
-  .meth-row { display: grid; grid-template-columns: 1.4fr 60px 1fr 90px 84px; gap: 14px; align-items: center; padding: 13px 4px; border-bottom: 1px solid var(--border); }
+  .meth-row { display: grid; grid-template-columns: 1.3fr 54px 1fr 92px 96px; gap: 12px; align-items: center; padding: 13px 4px; border-bottom: 1px solid var(--border); }
   .meth-row:last-child { border-bottom: none; }
   .meth-row.head { font-size: 11px; text-transform: uppercase; letter-spacing: .05em; color: var(--ink-3); font-weight: 650; }
   .meth-name { font-weight: 600; }
@@ -324,6 +324,33 @@
   .op-body .rat { display: block; margin-top: 3px; font-size: 11.5px; color: var(--ink-2); font-style: italic; }
   .locked-art { display: inline-flex; align-items: center; gap: 5px; font-size: 11.5px; color: var(--ink-2); font-family: var(--font-mono); padding: 3px 9px; border: 1px dashed var(--border-strong); border-radius: 6px; }
   .tl-approval { display: flex; align-items: center; gap: 12px; margin-top: 6px; padding: 12px 14px; border-radius: 8px; background: var(--pass-soft); border: 1px solid color-mix(in srgb, var(--pass) 30%, transparent); font-size: 12.5px; color: var(--pass); }
+
+  /* ---- WBS 3-level ---- */
+  .wbs-summary { display: flex; gap: 26px; margin-bottom: 4px; }
+  .wbs-summary .n { font-family: var(--font-mono); font-size: 26px; font-weight: 700; letter-spacing: -.02em; }
+  .wbs-summary .l { font-size: 11.5px; color: var(--ink-2); }
+  .wbs-summary .n small { font-size: 13px; color: var(--ink-3); font-weight: 500; }
+  .wbs-stages { display: flex; gap: 6px; overflow-x: auto; padding: 4px 0 8px; }
+  .wbs-stage { flex: 1 0 130px; min-width: 130px; border: 1px solid var(--border); border-radius: 9px; padding: 10px 12px; background: var(--surface); }
+  .wbs-stage.sel { border-color: var(--accent); background: var(--accent-soft); }
+  .wbs-stage .st-key { font-family: var(--font-mono); font-size: 10px; color: var(--ink-3); }
+  .wbs-stage .st-name { font-weight: 600; font-size: 13.5px; margin: 2px 0 6px; }
+  .wbs-stage .st-count { font-family: var(--font-mono); font-size: 11px; color: var(--ink-2); }
+  .wbs-stage .st-gate { display: inline-block; margin-top: 6px; font-family: var(--font-mono); font-size: 10px; padding: 1px 7px; border-radius: 999px; background: var(--surface-2); color: var(--ink-2); }
+
+  .wbs-tree { margin-top: 6px; }
+  .wbs-act { border: 1px solid var(--border); border-radius: 9px; margin-bottom: 8px; overflow: hidden; }
+  .wbs-act__head { display: flex; align-items: center; gap: 10px; padding: 10px 12px; background: var(--surface-2); }
+  .wbs-act__key { font-family: var(--font-mono); font-size: 11.5px; font-weight: 700; color: var(--accent-ink); }
+  .wbs-act__name { font-weight: 600; font-size: 13px; }
+  .wbs-act__role { margin-left: auto; font-size: 10.5px; font-family: var(--font-mono); color: var(--ink-2); padding: 2px 8px; border: 1px solid var(--border); border-radius: 999px; background: var(--surface); }
+  .wbs-task { display: flex; align-items: center; gap: 10px; padding: 9px 12px 9px 16px; border-top: 1px solid var(--border); font-size: 13px; }
+  .wbs-task__check { width: 15px; height: 15px; border-radius: 4px; border: 1.5px solid var(--border-strong); flex: none; display: grid; place-items: center; font-size: 10px; color: #fff; }
+  .wbs-task__check.done { background: var(--pass); border-color: var(--pass); }
+  .wbs-task__key { font-family: var(--font-mono); font-size: 11px; color: var(--ink-3); flex: none; width: 44px; }
+  .wbs-task__name { }
+  .wbs-task__deliv { margin-left: auto; font-family: var(--font-mono); font-size: 10.5px; padding: 2px 8px; border-radius: 6px; background: var(--accent-soft); color: var(--accent-ink); }
+  .wbs-task__deliv.gate { background: var(--approve-soft); color: var(--approve); }
 
   a { color: var(--accent); }
   :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 4px; }
@@ -372,41 +399,75 @@
 
       <div class="card card-pad">
         <div class="meth-row head">
-          <span>방법론</span><span>버전</span><span>컴플라이언스</span><span>단계</span><span>상태</span>
+          <span>방법론</span><span>버전</span><span>컴플라이언스</span><span>단·액·태</span><span>상태</span>
         </div>
         <div class="meth-row meth-selected">
           <div class="meth-name">의료기기 SW <small>IEC 62304</small></div>
           <span class="mono">v2.0</span>
           <div class="chips"><span class="chip-s">IEC62304</span><span class="chip-s">21CFR11</span></div>
-          <span class="mono">5</span>
+          <span class="mono">6·22·51</span>
           <span class="pill pass">PUBLISHED</span>
         </div>
         <div class="meth-row">
           <div class="meth-name">차량 기능안전 <small>ISO 26262</small></div>
           <span class="mono">v1.3</span>
           <div class="chips"><span class="chip-s">ISO26262</span><span class="chip-s">ASPICE</span></div>
-          <span class="mono">6</span>
+          <span class="mono">6·26·64</span>
           <span class="pill pass">PUBLISHED</span>
         </div>
         <div class="meth-row">
           <div class="meth-name">사내 애자일 <small>Agile-Lite</small></div>
           <span class="mono">v0.9</span>
           <div class="chips"><span class="chip-s">internal</span></div>
-          <span class="mono">4</span>
+          <span class="mono">4·11·23</span>
           <span class="pill approve">DRAFT</span>
         </div>
       </div>
 
       <div class="card card-pad" style="margin-top:16px">
-        <h3 class="card-title">선택된 방법론 · 마스터 단계 — IEC 62304 v2.0</h3>
-        <div class="stagestrip">
-          <div class="sblock">요구사항<span class="g">G1</span></div><span class="arrow">→</span>
-          <div class="sblock">설계<span class="g">G2</span></div><span class="arrow">→</span>
-          <div class="sblock">구현<span class="g">G3</span></div><span class="arrow">→</span>
-          <div class="sblock">테스트<span class="g">G4</span></div><span class="arrow">→</span>
-          <div class="sblock">릴리즈<span class="g">G5</span></div>
+        <div style="display:flex;align-items:baseline;justify-content:space-between;flex-wrap:wrap;gap:10px">
+          <h3 class="card-title" style="margin:0">방법론 정의 구조 (WBS 3레벨) — IEC 62304 v2.0</h3>
+          <div class="wbs-summary">
+            <div><div class="n">6</div><div class="l">단계 STAGE</div></div>
+            <div><div class="n">22</div><div class="l">액티비티 ACTIVITY</div></div>
+            <div><div class="n">51</div><div class="l">태스크 TASK</div></div>
+          </div>
         </div>
-        <div class="hint">각 단계는 필수 산출물·Gate 통과조건을 정의합니다. 이 마스터를 프로젝트마다 <b>테일러링</b>해 실제 파이프라인을 만듭니다.</div>
+
+        <div class="wbs-stages">
+          <div class="wbs-stage"><div class="st-key">1 · planning</div><div class="st-name">계획</div><div class="st-count">액티비티 3 · 태스크 7</div><span class="st-gate">Gate G1*</span></div>
+          <div class="wbs-stage sel"><div class="st-key">2 · requirements</div><div class="st-name">요구사항</div><div class="st-count">액티비티 4 · 태스크 9</div><span class="st-gate">Gate G1</span></div>
+          <div class="wbs-stage"><div class="st-key">3 · design</div><div class="st-name">설계</div><div class="st-count">액티비티 4 · 태스크 9</div><span class="st-gate">Gate G2</span></div>
+          <div class="wbs-stage"><div class="st-key">4 · impl</div><div class="st-name">구현</div><div class="st-count">액티비티 4 · 태스크 10</div><span class="st-gate">Gate G3</span></div>
+          <div class="wbs-stage"><div class="st-key">5 · test</div><div class="st-name">테스트</div><div class="st-count">액티비티 4 · 태스크 10</div><span class="st-gate">Gate G4</span></div>
+          <div class="wbs-stage"><div class="st-key">6 · release</div><div class="st-name">릴리즈</div><div class="st-count">액티비티 3 · 태스크 6</div><span class="st-gate">Gate G5</span></div>
+        </div>
+
+        <div style="font-size:12px;color:var(--ink-2);margin:10px 0 6px"><b>2. 요구사항</b> 단계 펼침 — 액티비티(4) → 태스크(9). <b>태스크 = 체크리스트 · 산출물 생성 단위</b></div>
+        <div class="wbs-tree">
+          <div class="wbs-act">
+            <div class="wbs-act__head"><span class="wbs-act__key">2.1</span><span class="wbs-act__name">요구사항 수집</span><span class="wbs-act__role">Analyst</span></div>
+            <div class="wbs-task"><span class="wbs-task__check done">✓</span><span class="wbs-task__key">2.1.1</span><span class="wbs-task__name">이해관계자 인터뷰</span></div>
+            <div class="wbs-task"><span class="wbs-task__check done">✓</span><span class="wbs-task__key">2.1.2</span><span class="wbs-task__name">현행 시스템 분석</span></div>
+          </div>
+          <div class="wbs-act">
+            <div class="wbs-act__head"><span class="wbs-act__key">2.2</span><span class="wbs-act__name">요구사항 분석</span><span class="wbs-act__role">Analyst</span></div>
+            <div class="wbs-task"><span class="wbs-task__check done">✓</span><span class="wbs-task__key">2.2.1</span><span class="wbs-task__name">기능 요구 정의</span></div>
+            <div class="wbs-task"><span class="wbs-task__check done">✓</span><span class="wbs-task__key">2.2.2</span><span class="wbs-task__name">비기능 요구 정의</span></div>
+          </div>
+          <div class="wbs-act">
+            <div class="wbs-act__head"><span class="wbs-act__key">2.3</span><span class="wbs-act__name">요구사항 명세</span><span class="wbs-act__role">Analyst</span></div>
+            <div class="wbs-task"><span class="wbs-task__check done">✓</span><span class="wbs-task__key">2.3.1</span><span class="wbs-task__name">SRS 작성</span><span class="wbs-task__deliv gate">▤ SRS · Gate필수</span></div>
+            <div class="wbs-task"><span class="wbs-task__check done">✓</span><span class="wbs-task__key">2.3.2</span><span class="wbs-task__name">요구사항 ID 부여</span></div>
+          </div>
+          <div class="wbs-act">
+            <div class="wbs-act__head"><span class="wbs-act__key">2.4</span><span class="wbs-act__name">요구사항 검토</span><span class="wbs-act__role">QA · PM</span></div>
+            <div class="wbs-task"><span class="wbs-task__check done">✓</span><span class="wbs-task__key">2.4.1</span><span class="wbs-task__name">요구사항 리뷰</span></div>
+            <div class="wbs-task"><span class="wbs-task__check done">✓</span><span class="wbs-task__key">2.4.2</span><span class="wbs-task__name">추적성 초기화</span><span class="wbs-task__deliv">▤ RTM</span></div>
+            <div class="wbs-task"><span class="wbs-task__check">&nbsp;</span><span class="wbs-task__key">2.4.3</span><span class="wbs-task__name">G1 승인 (전자서명)</span><span class="wbs-task__deliv gate">⛿ Gate G1</span></div>
+          </div>
+        </div>
+        <div class="hint">Gate 는 <b>단계(레벨1)</b>에, 산출물은 <b>태스크(레벨3)</b>에 붙습니다. 이 마스터를 프로젝트마다 <b>테일러링</b>(단계·액티비티·태스크 레벨 병합/생략)해 실제 파이프라인을 만듭니다.</div>
       </div>
     </section>
 

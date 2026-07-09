@@ -52,13 +52,15 @@
 ## 3. 도메인 개념 지도
 
 ```
-Methodology (방법론)
- └─ Stage[] (단계: 요구사항→설계→구현→테스트→배포)
-     ├─ ArtifactTemplate[] (단계별 산출물 템플릿)
+Methodology (방법론)  — 3레벨 WBS 로 정의 (예: 단계 6 · 액티비티 22 · 태스크 51)
+ └─ Stage[] (레벨1: 단계, Gate 관문 단위)
+     ├─ Activity[] (레벨2: 액티비티, 역할별 작업 묶음)
+     │    └─ Task[] (레벨3: 태스크 = 체크리스트 항목 · 산출물 생성 단위)
+     │         └─ ArtifactTemplate (태스크가 산출하는 문서)
      └─ Gate (단계 종료 승인 지점)
          └─ ApprovalPolicy (필요 승인자/역할/서명 규칙)
 
-Project (프로젝트)  — 방법론을 인스턴스화
+Project (프로젝트)  — 방법론 선택 + 테일러링 → EffectiveStage/Activity/Task 로 인스턴스화
  ├─ WorkItem[] (요구사항/태스크/설계/산출물/테스트/결함/변경요청)
  │    └─ TraceLink[] (추적성 링크: satisfies/derives/implements/verifies…)
  ├─ Artifact[] (산출물 = WorkItem 집합에 대한 문서형 뷰, 버전관리)
