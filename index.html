@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="color-scheme" content="light dark">
-<meta name="description" content="방법론 실행 플랫폼(ALM) — 방법론 등록·저작·테일러링·Gate 승인 인터랙티브 목업">
+<meta name="description" content="방법론 실행 플랫폼(ALM) — 상품 인벤토리·릴리즈 트레인·방법론·테일러링·Gate 승인 인터랙티브 목업">
 </head>
 <body>
 <title>ALM — 방법론 실행 플랫폼 목업</title>
@@ -411,6 +411,53 @@
   .chk-item { display: flex; align-items: center; gap: 8px; font-size: 12.5px; padding: 6px 9px; border: 1px solid var(--border); border-radius: 7px; }
   .chk-item .x { margin-left: auto; color: var(--ink-3); cursor: pointer; }
 
+  /* ---- product catalog (inventory) ---- */
+  .prod-row { display: grid; grid-template-columns: 1.5fr 92px 84px 84px 62px 96px; gap: 12px; align-items: center; padding: 13px 4px; border-bottom: 1px solid var(--border); }
+  .prod-row:last-child { border-bottom: none; }
+  .prod-row.head { font-size: 11px; text-transform: uppercase; letter-spacing: .05em; color: var(--ink-3); font-weight: 650; }
+  .prod-row.sel { border: 1px solid color-mix(in srgb, var(--accent) 40%, transparent); background: var(--accent-soft); border-radius: 8px; padding-left: 10px; padding-right: 10px; }
+  .prod-name { font-weight: 600; }
+  .prod-name small { display: block; color: var(--ink-3); font-size: 11.5px; font-weight: 500; }
+  .lc { font-size: 10.5px; font-family: var(--font-mono); padding: 2px 8px; border-radius: 999px; background: var(--surface-2); color: var(--ink-2); border: 1px solid var(--border); width: fit-content; }
+  .lc.active { color: var(--pass); background: var(--pass-soft); border-color: transparent; }
+  .lc.maint { color: var(--approve); background: var(--approve-soft); border-color: transparent; }
+  .health { display: inline-flex; align-items: center; gap: 6px; font-size: 11.5px; font-family: var(--font-mono); color: var(--ink-2); }
+  .health .dot { width: 8px; height: 8px; border-radius: 50%; }
+  .health.ok .dot { background: var(--pass); }
+  .health.warn .dot { background: var(--approve); }
+  .health.risk .dot { background: var(--block); }
+
+  /* ---- release train ---- */
+  .rt-banner { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; padding: 14px 18px; border: 1px solid color-mix(in srgb, var(--accent) 30%, transparent); background: var(--accent-soft); border-radius: var(--radius); margin-bottom: 16px; }
+  .rt-banner .ver { font-family: var(--font-mono); font-size: 22px; font-weight: 700; color: var(--accent-ink); letter-spacing: -.02em; }
+  .rt-banner .same { font-size: 12px; color: var(--accent-ink); }
+  .rt-banner .rt-spacer { flex: 1; }
+  .rt-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(232px, 1fr)); gap: 14px; margin-top: 16px; }
+  .rt-card { border: 1px solid var(--border); border-radius: var(--radius); background: var(--surface); box-shadow: var(--shadow); padding: 14px; display: flex; flex-direction: column; gap: 9px; }
+  .rt-card.deferred { opacity: .7; border-style: dashed; background: var(--surface-2); }
+  .rt-card.ready { border-color: color-mix(in srgb, var(--pass) 45%, transparent); }
+  .rt-card__team { font-weight: 650; font-size: 14px; display: flex; align-items: center; gap: 7px; }
+  .rt-card__scope { font-size: 11.5px; color: var(--ink-2); }
+  .rt-mini { display: flex; gap: 3px; margin-top: 2px; }
+  .rt-mini i { flex: 1; height: 5px; border-radius: 3px; background: var(--surface-2); }
+  .rt-mini i.done { background: var(--pass); }
+  .rt-mini i.cur { background: var(--approve); }
+  .rt-card__foot { display: flex; align-items: center; justify-content: space-between; margin-top: auto; padding-top: 4px; }
+  .incl { font-family: var(--font-mono); font-size: 10px; padding: 2px 8px; border-radius: 999px; }
+  .incl.req { background: var(--surface-2); color: var(--ink-2); }
+  .incl.def { background: var(--block-soft); color: var(--block); }
+
+  /* ---- product·version·project trace ---- */
+  .trace { font-size: 13px; }
+  .trace .tnode { display: flex; align-items: center; gap: 10px; padding: 9px 8px; border-radius: 7px; }
+  .trace .tnode:hover { background: var(--surface-2); }
+  .trace .tkey { font-family: var(--font-mono); font-size: 10.5px; color: var(--ink-3); }
+  .trace .tchildren { margin-left: 16px; border-left: 1.5px solid var(--border); padding-left: 10px; }
+  .trace .prod { font-weight: 650; font-size: 14px; }
+  .trace .ver { font-weight: 650; color: var(--accent-ink); font-family: var(--font-mono); }
+  .trace .team { margin-left: auto; font-family: var(--font-mono); font-size: 10.5px; color: var(--ink-2); padding: 2px 8px; border: 1px solid var(--border); border-radius: 999px; }
+  .trace .deliv { font-family: var(--font-mono); font-size: 10.5px; color: var(--ink-3); }
+
   a { color: var(--accent); }
   :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 4px; }
 </style>
@@ -424,21 +471,26 @@
   <div class="topbar">
     <div class="proj-select">
       <span>결제 게이트웨이</span>
-      <span class="mono">v1.0.0</span>
+      <span class="mono">결제팀</span>
       <span style="color:var(--ink-3)">▾</span>
     </div>
-    <span class="meth-tag">방법론 · IEC 62304 (의료기기 SW)</span>
+    <span class="meth-tag">상품 · 페이먼트 스위트 <b class="mono">v2.1.0</b></span>
+    <span class="meth-tag">방법론 · IEC 62304</span>
     <div class="topbar__spacer"></div>
     <button class="theme-btn" id="themeToggle" type="button">◑ 테마</button>
   </div>
 
   <nav>
+    <div class="nav-label">포트폴리오</div>
+    <button class="nav-item active" data-screen="products" type="button"><span class="ico">▧</span> 상품 인벤토리 <span class="badge">3</span></button>
+    <button class="nav-item" data-screen="release" type="button"><span class="ico">⇈</span> 릴리즈 트레인 <span class="badge">v2.1</span></button>
+    <button class="nav-item" data-screen="pvp" type="button"><span class="ico">⋔</span> 상품·버전·프로젝트</button>
     <div class="nav-label">방법론</div>
     <button class="nav-item" data-screen="registry" type="button"><span class="ico">▣</span> 방법론 등록 <span class="badge">3</span></button>
     <button class="nav-item" data-screen="builder" type="button"><span class="ico">✎</span> 방법론 편집기</button>
     <button class="nav-item" data-screen="tailoring" type="button"><span class="ico">⤨</span> 테일러링</button>
     <div class="nav-label">실행</div>
-    <button class="nav-item active" data-screen="pipeline" type="button"><span class="ico">▤</span> 파이프라인</button>
+    <button class="nav-item" data-screen="pipeline" type="button"><span class="ico">▤</span> 파이프라인</button>
     <button class="nav-item" data-screen="scaffold" type="button"><span class="ico">✚</span> 프로젝트 생성</button>
     <div class="nav-label">산출물 · 승인</div>
     <button class="nav-item" data-screen="livedoc" type="button"><span class="ico">▦</span> 산출물 (SRS)</button>
@@ -449,6 +501,147 @@
   </nav>
 
   <main>
+    <!-- ============ PRODUCTS (INVENTORY) ============ -->
+    <section class="screen active" id="products">
+      <div class="screen__head">
+        <div class="eyebrow">PRODUCT INVENTORY</div>
+        <h1>상품 인벤토리 — 상품 카탈로그</h1>
+        <p>상품을 먼저 등록해 자산으로 관리합니다. 상품 단위로 <b>버전 릴리즈</b>를 진행하고, 동일 버전에서 기능을 나눠 다수 팀이 프로젝트를 동시에 진행합니다.</p>
+      </div>
+
+      <div class="card card-pad">
+        <div class="prod-row head">
+          <span>상품</span><span>상태</span><span>현재버전</span><span>진행버전</span><span>프로젝트</span><span>헬스</span>
+        </div>
+        <div class="prod-row sel">
+          <div class="prod-name">페이먼트 스위트 <small>Payment Suite · PAY</small></div>
+          <span class="lc active">ACTIVE</span>
+          <span class="mono">v2.0.0</span>
+          <span class="mono" style="color:var(--accent-ink)">v2.1.0</span>
+          <span class="mono">4</span>
+          <span class="health warn"><span class="dot"></span>릴리즈대기</span>
+        </div>
+        <div class="prod-row">
+          <div class="prod-name">코어뱅킹 <small>Core Banking · CBK</small></div>
+          <span class="lc active">ACTIVE</span>
+          <span class="mono">v3.2.0</span>
+          <span class="mono" style="color:var(--accent-ink)">v3.3.0</span>
+          <span class="mono">6</span>
+          <span class="health ok"><span class="dot"></span>정상</span>
+        </div>
+        <div class="prod-row">
+          <div class="prod-name">리스크 엔진 <small>Risk Engine · RSK</small></div>
+          <span class="lc maint">MAINT</span>
+          <span class="mono">v1.4.0</span>
+          <span class="mono">—</span>
+          <span class="mono">2</span>
+          <span class="health ok"><span class="dot"></span>정상</span>
+        </div>
+        <div class="btn-row"><button class="btn primary" type="button">＋ 상품 등록</button><button class="btn ghost" type="button">＋ 버전 릴리즈 생성</button></div>
+      </div>
+      <div class="hint">인벤토리는 <b>상품 카탈로그 중심</b>입니다. 상품 → 버전 → 프로젝트 추적 연결은 <b>상품·버전·프로젝트</b> 뷰에서, 버전별 릴리즈 진행은 <b>릴리즈 트레인</b>에서 봅니다.</div>
+    </section>
+
+    <!-- ============ RELEASE TRAIN ============ -->
+    <section class="screen" id="release">
+      <div class="screen__head">
+        <div class="eyebrow">RELEASE TRAIN</div>
+        <h1>릴리즈 트레인 — 페이먼트 스위트</h1>
+        <p>버전을 먼저 만들고 그 아래에 팀별 프로젝트를 붙입니다. 동일 버전의 <b>required</b> 프로젝트가 전부 최종 Gate를 통과해야 함께 릴리즈됩니다(하드 동기). 준비 안 된 프로젝트는 다음 버전으로 이월(deferred).</p>
+      </div>
+
+      <div class="rt-banner">
+        <span class="ver">v2.1.0</span>
+        <span class="same">동일 버전 · 4개 프로젝트 (required 3 · deferred 1)</span>
+        <div class="rt-spacer"></div>
+        <span class="pill approve">릴리즈 대기</span>
+        <span class="pill block">required 2건 미완</span>
+      </div>
+
+      <div class="grid-2">
+        <div class="card card-pad">
+          <h3 class="card-title">상품 릴리즈 Gate (프로젝트 최종 Gate 집계)</h3>
+          <div class="check-list">
+            <div class="check ok"><div class="check__ico">✓</div><div class="check__body"><b>인증/보안</b> — 최종 Gate(G5) 통과 · release-ready <div class="check__req">required</div></div></div>
+            <div class="check fail"><div class="check__ico">✕</div><div class="check__body"><b>결제 게이트웨이</b> — G4 승인중(결함 1건) <div class="check__req">required · 미완</div></div></div>
+            <div class="check fail"><div class="check__ico">✕</div><div class="check__body"><b>정산/리포트</b> — 구현 G3 진행 <div class="check__req">required · 미완</div></div></div>
+            <div class="check ok"><div class="check__ico">↷</div><div class="check__body" style="color:var(--ink-2)"><b>알림 센터</b> — 다음 버전(v2.2.0)으로 이월 <div class="check__req">deferred · waived</div></div></div>
+          </div>
+          <div class="hint" style="color:var(--block);border-color:var(--block)">차단됨: required 프로젝트 2건이 최종 Gate 미통과라 v2.1.0 릴리즈 불가. 전부 통과 시 동일 버전으로 동시 릴리즈됩니다.</div>
+        </div>
+
+        <div class="card card-pad">
+          <h3 class="card-title">릴리즈 요약</h3>
+          <div class="stage__row" style="padding:6px 0"><span>목표일</span><b>2026-08-14</b></div>
+          <div class="stage__row" style="padding:6px 0"><span>release-ready</span><b style="color:var(--pass)">1 / 3</b></div>
+          <div class="stage__row" style="padding:6px 0"><span>이월(deferred)</span><b>1</b></div>
+          <div class="stage__row" style="padding:6px 0"><span>동일 버전 스탬프</span><b class="mono">v2.1.0</b></div>
+          <div class="sig-note" style="margin-top:12px">🔗 <span>릴리즈 시 소속 프로젝트 베이스라인에 v2.1.0 각인 · 버전 구성 스냅샷 동결</span></div>
+        </div>
+      </div>
+
+      <div class="rt-grid">
+        <div class="rt-card">
+          <div class="rt-card__team">결제 게이트웨이 <span class="pill approve" style="margin-left:auto">G4</span></div>
+          <div class="rt-card__scope">결제팀 · 카드/계좌 결제, 정산 연동</div>
+          <div class="rt-mini"><i class="done"></i><i class="done"></i><i class="done"></i><i class="cur"></i><i></i></div>
+          <div class="rt-card__foot"><span style="font-size:11.5px;color:var(--approve)">테스트 Gate 승인중</span><span class="incl req">required</span></div>
+        </div>
+        <div class="rt-card ready">
+          <div class="rt-card__team">인증/보안 <span class="pill pass" style="margin-left:auto">READY</span></div>
+          <div class="rt-card__scope">인증팀 · OAuth2·MFA·세션</div>
+          <div class="rt-mini"><i class="done"></i><i class="done"></i><i class="done"></i><i class="done"></i><i class="done"></i></div>
+          <div class="rt-card__foot"><span style="font-size:11.5px;color:var(--pass)">최종 Gate 통과 · release-ready</span><span class="incl req">required</span></div>
+        </div>
+        <div class="rt-card">
+          <div class="rt-card__team">정산/리포트 <span class="pill accent" style="margin-left:auto">G3</span></div>
+          <div class="rt-card__scope">정산팀 · 정산 배치·리포트</div>
+          <div class="rt-mini"><i class="done"></i><i class="done"></i><i class="cur"></i><i></i><i></i></div>
+          <div class="rt-card__foot"><span style="font-size:11.5px;color:var(--ink-2)">구현 진행 중</span><span class="incl req">required</span></div>
+        </div>
+        <div class="rt-card deferred">
+          <div class="rt-card__team">알림 센터 <span class="pill locked" style="margin-left:auto">이월</span></div>
+          <div class="rt-card__scope">알림팀 · 푸시·이메일·SMS</div>
+          <div class="rt-mini"><i class="done"></i><i class="cur"></i><i></i><i></i><i></i></div>
+          <div class="rt-card__foot"><span style="font-size:11.5px;color:var(--ink-3)">v2.2.0으로 이월</span><span class="incl def">deferred</span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ PRODUCT·VERSION·PROJECT TRACE ============ -->
+    <section class="screen" id="pvp">
+      <div class="screen__head">
+        <div class="eyebrow">PRODUCT · VERSION · PROJECT</div>
+        <h1>상품 · 버전 · 프로젝트 추적</h1>
+        <p>카탈로그(상품)에서 드릴다운해 <b>상품 → 버전 → 프로젝트 → 산출물·베이스라인</b>으로 연결되는 추적 뷰입니다.</p>
+      </div>
+
+      <div class="card card-pad">
+        <div class="trace">
+          <div class="tnode"><span class="prod">페이먼트 스위트</span><span class="lc active">ACTIVE</span></div>
+          <div class="tchildren">
+
+            <div class="tnode"><span class="ver">v2.1.0</span><span class="pill approve">진행중 · 릴리즈대기</span></div>
+            <div class="tchildren">
+              <div class="tnode"><span class="tkey">PRJ</span>결제 게이트웨이<span class="deliv">SRS·SDS·RTM·TestPlan</span><span class="team">결제팀 · G4</span></div>
+              <div class="tnode"><span class="tkey">PRJ</span>인증/보안<span class="deliv">baseline 동결(G5)</span><span class="team">인증팀 · READY</span></div>
+              <div class="tnode"><span class="tkey">PRJ</span>정산/리포트<span class="deliv">SRS·SDS</span><span class="team">정산팀 · G3</span></div>
+              <div class="tnode" style="opacity:.6"><span class="tkey">PRJ</span>알림 센터<span class="deliv">→ v2.2.0 이월</span><span class="team">알림팀 · deferred</span></div>
+            </div>
+
+            <div class="tnode"><span class="ver">v2.0.0</span><span class="pill pass">released · 2026-03-20</span></div>
+            <div class="tchildren">
+              <div class="tnode"><span class="tkey">PRJ</span>결제 게이트웨이<span class="deliv">baseline v2.0.0 동결</span><span class="team">결제팀 · 릴리즈</span></div>
+              <div class="tnode"><span class="tkey">PRJ</span>인증/보안<span class="deliv">baseline v2.0.0 동결</span><span class="team">인증팀 · 릴리즈</span></div>
+              <div class="tnode"><span class="tkey">PRJ</span>정산/리포트<span class="deliv">baseline v2.0.0 동결</span><span class="team">정산팀 · 릴리즈</span></div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+      <div class="hint">동일 버전은 소속 프로젝트 모두에 동일하게 적용됩니다(프로젝트별 별도 버전 없음). 릴리즈된 버전(v2.0.0)은 각 프로젝트 베이스라인이 동결되어 감사·형상관리에 사용됩니다.</div>
+    </section>
+
     <!-- ============ REGISTRY ============ -->
     <section class="screen" id="registry">
       <div class="screen__head">
@@ -686,7 +879,7 @@
     </section>
 
     <!-- ============ PIPELINE ============ -->
-    <section class="screen active" id="pipeline">
+    <section class="screen" id="pipeline">
       <div class="screen__head">
         <div class="eyebrow">PROJECT PIPELINE</div>
         <h1>결제 게이트웨이 — 방법론 진행 현황</h1>
