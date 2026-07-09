@@ -449,6 +449,27 @@
   .trace .team { margin-left: auto; font-family: var(--font-mono); font-size: 10.5px; color: var(--ink-2); padding: 2px 8px; border: 1px solid var(--border); border-radius: 999px; }
   .trace .deliv { font-family: var(--font-mono); font-size: 10.5px; color: var(--ink-3); }
 
+  /* ---- artifact template library ---- */
+  .tpl-row { display: grid; grid-template-columns: 1.25fr 88px 1fr 78px 66px; gap: 12px; align-items: center; padding: 12px 4px; border-bottom: 1px solid var(--border); }
+  .tpl-row:last-child { border-bottom: none; }
+  .tpl-row.head { font-size: 11px; text-transform: uppercase; letter-spacing: .05em; color: var(--ink-3); font-weight: 650; }
+  .tpl-name { font-weight: 600; }
+  .tpl-name small { display: block; color: var(--ink-3); font-size: 11.5px; font-weight: 500; }
+  .mand-flag { font-family: var(--font-mono); font-size: 10.5px; }
+  .mand-flag.on { color: var(--block); }
+  .mand-flag.off { color: var(--ink-3); }
+
+  /* ---- task assignment (execution) ---- */
+  .asg-row { display: grid; grid-template-columns: 1.15fr 1fr 1.5fr 78px; gap: 14px; align-items: center; padding: 12px 4px; border-bottom: 1px solid var(--border); }
+  .asg-row:last-child { border-bottom: none; }
+  .asg-row.head { font-size: 11px; text-transform: uppercase; letter-spacing: .05em; color: var(--ink-3); font-weight: 650; }
+  .asg-task .tkey { font-family: var(--font-mono); font-size: 10.5px; color: var(--ink-3); margin-right: 7px; }
+  .person { display: inline-flex; align-items: center; gap: 7px; font-size: 12.5px; }
+  .avatar { width: 21px; height: 21px; border-radius: 50%; background: var(--accent-soft); color: var(--accent-ink); display: grid; place-items: center; font-size: 10px; font-weight: 700; font-family: var(--font-mono); flex: none; }
+  .avatar.sec { background: var(--surface-2); color: var(--ink-2); }
+  .role-tag { font-family: var(--font-mono); font-size: 10px; color: var(--ink-3); }
+  .sec-people { display: flex; gap: 9px; flex-wrap: wrap; }
+
   a { color: var(--accent); }
   :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 4px; }
 </style>
@@ -479,9 +500,11 @@
     <div class="nav-label">방법론</div>
     <button class="nav-item" data-screen="registry" type="button"><span class="ico">▣</span> 방법론 등록 <span class="badge">3</span></button>
     <button class="nav-item" data-screen="builder" type="button"><span class="ico">✎</span> 방법론 편집기</button>
+    <button class="nav-item" data-screen="templates" type="button"><span class="ico">▦</span> 산출물 템플릿 <span class="badge">8</span></button>
     <button class="nav-item" data-screen="tailoring" type="button"><span class="ico">⤨</span> 테일러링</button>
     <div class="nav-label">실행</div>
     <button class="nav-item" data-screen="pipeline" type="button"><span class="ico">▤</span> 파이프라인</button>
+    <button class="nav-item" data-screen="assign" type="button"><span class="ico">☰</span> 태스크 배정</button>
     <button class="nav-item" data-screen="scaffold" type="button"><span class="ico">✚</span> 프로젝트 생성</button>
     <div class="nav-label">산출물 · 승인</div>
     <button class="nav-item" data-screen="livedoc" type="button"><span class="ico">▦</span> 산출물 (SRS)</button>
@@ -781,10 +804,14 @@
           <h4>SRS 작성</h4>
           <div class="pfield"><label>WBS 코드 (자동)</label><div class="inp mono">2.3.1</div></div>
           <div class="pfield"><label>태스크명</label><div class="inp">SRS 작성</div></div>
-          <div class="pfield"><label>수행 역할</label><div class="inp">Analyst ▾</div></div>
+          <div class="pfield"><label>주수행 역할 (1)</label><div class="inp">Analyst ▾</div></div>
+          <div class="pfield"><label>부수행 역할 (다수)</label>
+            <div class="chips" style="padding:2px 0"><span class="chip-s">QA <span style="color:var(--ink-3)">✕</span></span><span class="chip-s">PM <span style="color:var(--ink-3)">✕</span></span><button class="te-add" type="button" style="margin:0">＋ 역할</button></div>
+          </div>
+          <div style="font-size:11px;color:var(--ink-3);margin-top:4px">방법론에는 <b>역할</b>만 등록 · 실제 사람은 실행(태스크 배정)에서 지정</div>
 
           <div class="ptoggle"><span>산출물 생성</span><span class="switch"></span></div>
-          <div class="pfield"><label>산출물 템플릿</label><div class="inp mono">SRS ▾</div></div>
+          <div class="pfield"><label>산출물 템플릿 <span style="color:var(--ink-3);font-weight:400">(템플릿 라이브러리에서 선택)</span></label><div class="inp mono">SRS ▾</div></div>
           <div class="ptoggle"><span>Gate 필수 (gate_relevant)</span><span class="switch"></span></div>
           <div class="ptoggle"><span>정책 잠금 (mandatory · 생략불가)</span><span class="switch"></span></div>
 
@@ -802,6 +829,75 @@
         </div>
       </div>
       <div class="hint">WBS 코드는 순서·이동에 따라 자동 재부여됩니다. 발행 검증: 모든 단계에 Gate·승인정책 연결, 빈 단계 없음, 산출물 참조 유효 — 통과해야 발행됩니다. (UI ↔ 방법론 YAML 양방향 동기화)</div>
+    </section>
+
+    <!-- ============ ARTIFACT TEMPLATES ============ -->
+    <section class="screen" id="templates">
+      <div class="screen__head">
+        <div class="eyebrow">ARTIFACT TEMPLATE LIBRARY</div>
+        <h1>산출물 템플릿 — 라이브러리</h1>
+        <p>태스크의 <b>산출물 생성</b>은 여기 등록된 템플릿에서 선택합니다. 즉 산출물을 설정하려면 이 라이브러리에서 템플릿을 먼저 등록·관리해야 합니다.</p>
+      </div>
+
+      <div class="card card-pad">
+        <div class="tpl-row head">
+          <span>템플릿</span><span>key</span><span>자동채움 소스</span><span>mandatory</span><span>사용 태스크</span>
+        </div>
+        <div class="tpl-row">
+          <div class="tpl-name">소프트웨어 요구사항 명세 <small>SRS</small></div>
+          <span class="mono">SRS</span>
+          <span class="mono" style="font-size:11.5px;color:var(--ink-2)">WorkItem(requirement)</span>
+          <span class="mand-flag on">🔒 잠금</span>
+          <span class="mono">3</span>
+        </div>
+        <div class="tpl-row">
+          <div class="tpl-name">소프트웨어 설계 명세 <small>SDS</small></div>
+          <span class="mono">SDS</span>
+          <span class="mono" style="font-size:11.5px;color:var(--ink-2)">WorkItem(design)</span>
+          <span class="mand-flag off">optional</span>
+          <span class="mono">2</span>
+        </div>
+        <div class="tpl-row">
+          <div class="tpl-name">요구사항 추적 매트릭스 <small>RTM</small></div>
+          <span class="mono">RTM</span>
+          <span class="mono" style="font-size:11.5px;color:var(--ink-2)">TraceLink 집계</span>
+          <span class="mand-flag off">required</span>
+          <span class="mono">2</span>
+        </div>
+        <div class="tpl-row">
+          <div class="tpl-name">테스트 계획서 <small>TestPlan</small></div>
+          <span class="mono">TestPlan</span>
+          <span class="mono" style="font-size:11.5px;color:var(--ink-2)">manual</span>
+          <span class="mand-flag off">required</span>
+          <span class="mono">1</span>
+        </div>
+        <div class="tpl-row">
+          <div class="tpl-name">검증 결과서 <small>ValidationReport</small></div>
+          <span class="mono">ValRpt</span>
+          <span class="mono" style="font-size:11.5px;color:var(--ink-2)">CI test_result</span>
+          <span class="mand-flag on">🔒 잠금</span>
+          <span class="mono">1</span>
+        </div>
+        <div class="tpl-row">
+          <div class="tpl-name">릴리즈 노트 <small>ReleaseNote</small></div>
+          <span class="mono">RelNote</span>
+          <span class="mono" style="font-size:11.5px;color:var(--ink-2)">commit/PR 집계</span>
+          <span class="mand-flag off">required</span>
+          <span class="mono">1</span>
+        </div>
+        <div class="btn-row"><button class="btn primary" type="button">＋ 템플릿 등록</button></div>
+      </div>
+
+      <div class="card card-pad" style="margin-top:16px">
+        <h3 class="card-title">템플릿 상세 — SRS</h3>
+        <div class="tool-list">
+          <div class="tool">블록 스키마 <span class="mono">1.개요 · 2.범위 · 3.기능요구 · 4.비기능요구 …</span></div>
+          <div class="tool">자동채움 소스 <span class="mono">WorkItem(type=requirement) 쿼리</span></div>
+          <div class="tool">ID 규칙 <span class="mono">REQ-\d{3}</span></div>
+        </div>
+        <div class="ptoggle" style="max-width:320px"><span>정책 잠금 (mandatory · 생략불가)</span><span class="switch"></span></div>
+        <div class="hint">이 템플릿을 참조하는 태스크(예: 2.3.1 SRS 작성)에서 "산출물 생성 → SRS"로 연결됩니다. 잠긴(mandatory) 템플릿은 테일러링으로 생략할 수 없습니다.</div>
+      </div>
     </section>
 
     <!-- ============ TAILORING ============ -->
@@ -950,6 +1046,63 @@
           <div class="log-row"><span class="log-time">07-09 09:41</span><span class="log-src">jenkins/build</span><span class="log-msg">정적분석 SonarQube quality gate 통과 → G3 조건 충족</span></div>
         </div>
       </div>
+    </section>
+
+    <!-- ============ TASK ASSIGNMENT (EXECUTION) ============ -->
+    <section class="screen" id="assign">
+      <div class="screen__head">
+        <div class="eyebrow">TASK ASSIGNMENT · EXECUTION</div>
+        <h1>태스크 배정 (실행) — 결제 게이트웨이</h1>
+        <p>방법론에는 <b>역할</b>만 정의됩니다. 실행에서는 각 역할에 <b>실제 사람</b>을 배정합니다 — 주수행자 1명 + 부수행자 다수. 진행한 사람이 기록되어 감사에 사용됩니다.</p>
+      </div>
+
+      <div class="card card-pad">
+        <div class="asg-row head">
+          <span>태스크</span><span>주수행자 (역할)</span><span>부수행자 (역할·다수)</span><span>상태</span>
+        </div>
+        <div class="asg-row">
+          <div class="asg-task"><span class="tkey">2.1.1</span>이해관계자 인터뷰</div>
+          <span class="person"><span class="avatar">홍</span>홍길동 <span class="role-tag">Analyst</span></span>
+          <div class="sec-people">
+            <span class="person"><span class="avatar sec">김</span>김QA <span class="role-tag">QA</span></span>
+            <span class="person"><span class="avatar sec">박</span>박PM <span class="role-tag">PM</span></span>
+          </div>
+          <span class="pill pass">완료</span>
+        </div>
+        <div class="asg-row">
+          <div class="asg-task"><span class="tkey">2.3.1</span>SRS 작성</div>
+          <span class="person"><span class="avatar">홍</span>홍길동 <span class="role-tag">Analyst</span></span>
+          <div class="sec-people">
+            <span class="person"><span class="avatar sec">이</span>이문서 <span class="role-tag">Analyst</span></span>
+            <span class="person"><span class="avatar sec">최</span>최리뷰 <span class="role-tag">QA</span></span>
+          </div>
+          <span class="pill pass">완료</span>
+        </div>
+        <div class="asg-row">
+          <div class="asg-task"><span class="tkey">2.4.3</span>G1 승인 (전자서명)</div>
+          <span class="person"><span class="avatar">정</span>정승인 <span class="role-tag">QA_Lead</span></span>
+          <div class="sec-people">
+            <span class="person"><span class="avatar sec">박</span>박PM <span class="role-tag">PM</span></span>
+          </div>
+          <span class="pill approve">진행</span>
+        </div>
+        <div class="asg-row">
+          <div class="asg-task"><span class="tkey">4.2.1</span>단위 개발</div>
+          <span class="person"><span class="avatar">서</span>서개발 <span class="role-tag">Developer</span></span>
+          <div class="sec-people">
+            <span class="person"><span class="avatar sec">한</span>한개발 <span class="role-tag">Developer</span></span>
+            <span class="person"><span class="avatar sec">유</span>유리뷰 <span class="role-tag">Reviewer</span></span>
+          </div>
+          <span class="pill approve">진행</span>
+        </div>
+        <div class="asg-row">
+          <div class="asg-task"><span class="tkey">2.4.2</span>추적성 초기화</div>
+          <span class="person" style="color:var(--ink-3)"><span class="avatar sec">?</span>미배정 <span class="role-tag">Analyst</span></span>
+          <div class="sec-people"><span style="font-size:12px;color:var(--ink-3)">—</span></div>
+          <span class="pill locked">대기</span>
+        </div>
+      </div>
+      <div class="hint">역할↔사람 매핑은 <b>프로젝트별</b>로 관리됩니다. 방법론(정의)의 <b>주수행 역할·부수행 역할</b>에 실제 인원을 배정하며, 미배정 태스크는 시작 전 배정이 필요합니다. 완료된 태스크에는 진행한 사람이 감사로그로 기록됩니다.</div>
     </section>
 
     <!-- ============ SCAFFOLD ============ -->
